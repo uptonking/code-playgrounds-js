@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "downlevelIteration": true,
+    "importHelpers": true,
+    "sourceMap": true,
+    "jsx": "react",
+    "allowJs": true,
+    "checkJs": false,
+    "lib": ["dom", "esnext"],
+    "experimentalDecorators": false,
+    "noImplicitAny": true,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": false,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "declaration": true,
+    "esModuleInterop": true
+  },
+  "exclude": ["*/node_modules/*"]
+}
