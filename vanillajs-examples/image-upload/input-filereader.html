@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-with,initial-scale=1" />
+    <!--    <link rel="icon" href="data:;base64,iVBORwOKGO=" /> -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%3E%3Ctext%20x='0'%20y='14'%3E🤗%3C/text%3E%3C/svg%3E"
+    />
+    <title>file reader</title>
+
+    <style type="text/css"></style>
+  </head>
+
+  <body>
+    <h1>1.DataURL方式：</h1>
+    <input
+      type="file"
+      accept="image/*"
+      onchange="selectFileForDataURL(event)"
+    />
+    <img id="output1" />
+
+    <h1>2.Blob方式：</h1>
+    <input type="file" accept="image/*" onchange="selectFileForBlob(event)" />
+    <img id="output2" />
+
+    <script>
+      // 1.DataURL方式：
+      async function selectFileForDataURL() {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const output = document.querySelector('#output1');
+          console.log(';; 上传图片 ', reader.result)
+          output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+      }
+
+      //2.Blob方式：
+      async function selectFileForBlob() {
+        const reader = new FileReader();
+        const output = document.querySelector('#output2');
+        const imgUrl = window.URL.createObjectURL(event.target.files[0]);
+        output.src = imgUrl;
+        reader.onload = function (event) {
+          window.URL.revokeObjectURL(imgUrl);
+        };
+      }
+    </script>
+  </body>
+</html>
