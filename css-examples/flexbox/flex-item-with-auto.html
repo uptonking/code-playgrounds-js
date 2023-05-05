@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-with,initial-scale=1" />
+    <!--    <link rel="icon" href="data:;base64,iVBORwOKGO=" /> -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%3E%3Ctext%20x='0'%20y='14'%3E🤗%3C/text%3E%3C/svg%3E"
+    />
+    <title>position-absolute-width-height</title>
+
+    <style type="text/css">
+      * {
+        box-sizing: border-box;
+      }
+
+      .flex {
+        display: flex;
+        min-width: 320px;
+        min-height: 80px;
+        border: 1px solid red;
+      }
+
+      .bg-gray {
+        background-color: lavender;
+      }
+      .bg-green {
+        background-color: beige;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>🤔 问题:div的overflow为 auto 时，内部绝对定位元素无法显示</h1>
+    <h3>
+      position-absolute会脱离文档流，不会填充父容器宽高，需要手动设置父容器宽高
+    </h3>
+    <div class="flex">
+      <div class="bg-gray" style="width: 60px">固定宽度</div>
+      <div class="bg-green">
+        <div>
+          <!-- 💡 问题出在overflow-auto，去掉后就可显示 -->
+          <div style="width: auto; overflow: auto">
+            <!-- <div style="width: auto"> -->
+            <div style="width: 100%; position: relative">
+              <div
+                style="width: 100%; position: absolute; left: 16px; top: 8px"
+              >
+                content
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h1>解决方案: 手动设置绝对定位元素的容器的宽高</h1>
+    <div class="flex">
+      <div class="bg-gray" style="width: 60px">固定宽度</div>
+      <!-- 👇🏻 通过flex设置宽度 -->
+      <div class="bg-green" style="flex-grow: 1">
+        <div>
+          <div style="width: auto; overflow: auto">
+            <!-- 👇🏻 高度不能设置为100%，要设置为具体值 -->
+            <!-- <div style="width: 100%; height: 100%; position: relative"> -->
+            <div style="width: 100%; height: 100px; position: relative">
+              <div
+                style="width: 100%; position: absolute; left: 16px; top: 8px"
+              >
+                content
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h1>test: div的overflow为 默认visible 时，元素也可见，但宽高为0</h1>
+    <div class="flex">
+      <div class="bg-gray" style="width: 60px">固定宽度</div>
+      <div class="bg-green">
+        <div>
+          <div style="width: auto">
+            <div style="width: 100%; position: relative">
+              <div
+                style="width: 100%; position: absolute; left: 16px; top: 8px"
+              >
+                content
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script></script>
+  </body>
+</html>
