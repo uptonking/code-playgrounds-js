@@ -31,19 +31,96 @@
     }
 
     .main {
-      width: 100%;
+      width: 50%;
+      overflow: auto;
+    }
+
+    .row {
+      display: flex;
+    }
+
+    .left {
+      width: 40px;
+      flex: none;
+    }
+
+    .right {
+      width: 60px;
+      flex: none;
+    }
+
+    .middle {
+      flex-grow: 1;
+      flex-shrink: 1;
+      flex-basis: 0%;
+
+      /* display: flex;
+      justify-content: start;
+      align-items: center; */
+
+      height: 32px;
+
+      padding-left: 8px;
+      padding-right: 8px;
+
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      border: 1px solid coral;
+
     }
   </style>
 </head>
 
 <body>
-  <h1>test homepage <h1>
+  <h1>flex auto text-ellipsis <h1>
 
-      <h2> more </h2>
+      <h2> left/width has fixed width, middle auto grow and auto text ellipsis </h2>
+
+      <h3>
+        <a href="https://stackoverflow.com/questions/55041595">
+          text-overflow ellipsis is not working when using display:flex
+        </a>
+      </h3>
 
       <div id="main" class="main">
+        <div class="row">
+          <div class="left">
+            port
+          </div>
+          <div class="middle">
+            url
+          </div>
+          <div class="right">
+            copy
+          </div>
+        </div>
+        <div class="row">
+          <div class="left">
+            port
+          </div>
+          <div class="middle">
+            http://localhost:3000/thread/0193a571-6257-77e0-a8cb-7fe2956d3378-6257-77e0-a8cb-7fe2956d3378-6257-77e0-a8cb-7fe2956d3378'
+          </div>
+          <div class="right">
+            copy
+          </div>
+        </div>
+        <div class="row">
+          <div class="left">
+            port
+          </div>
+          <div class="middle">
+            http://localhost:3000/thread/0193a571-6257-77e0-a8cb-7fe2956d3378
+          </div>
+          <div class="right">
+            copy
+          </div>
+        </div>
 
       </div>
+
 
       <ul>
         <!-- <li>
