@@ -1,0 +1,29 @@
+<html style="color-scheme: dark;">
+
+<head>
+  <meta name="color-scheme" content="light dark">
+</head>
+
+<body>
+  <h2 class="switchTheming"> click to switch theme </h2>
+  <pre style="word-wrap: break-word; white-space: pre-wrap;">
+    Internal Server Error(remote host or port)
+    <h3>默认是无底黑字</h3>
+</pre>
+
+<script>
+  const switchTheming = document.querySelector('.switchTheming');
+  console.log(switchTheming);
+  switchTheming.addEventListener('click', () => {
+    const root = document.documentElement;
+    if(root.style.colorScheme === 'light') {
+      root.style.colorScheme = 'dark';
+    } else {
+      root.style.colorScheme = 'light';
+    }
+  });
+
+</script>
+</body>
+
+</html>
