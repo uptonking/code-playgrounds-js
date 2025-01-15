@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebSocket Example</title>
+  </head>
+  <body>
+    <h1>WebSocket Connection Example</h1>
+    <div>
+      <p>Connection Status: <span id="status">Not Connected</span></p>
+      <p>Received Messages: <span id="messages"></span></p>
+    </div>
+
+    <script>
+      // WebSocket server URL
+      // const wsUrl = 'wss://echo.websocket.org'; // This is a public WebSocket echo server
+      // const wsUrl = 'wss://8081-21f2a36f418e-web.develop.clackypaas.com';
+      // const wsUrl = 'ws://8081-21f2a36f418e-web.develop.clackypaas.com:8081';
+      // const wsUrl = 'wss://8081-21f2a36f418e-web.develop.clackypaas.com:8081';
+      // const wsUrl = 'wss://8081-21f2a36f418e-web.develop.clackypaas.com';
+      const wsUrl = 'ws://localhost:8081';
+
+      // Create a new WebSocket instance
+      const socket = new WebSocket(wsUrl);
+
+      // Handle the connection opening
+      socket.addEventListener('open', (event) => {
+        console.log('WebSocket connection opened:', event);
+        document.getElementById('status').textContent = 'Connected';
+
+        // Send a message to the server once connected
+        socket.send('Hello Server!');
+      });
+
+      // Handle messages received from the server
+      socket.addEventListener('message', (event) => {
+        console.log('Message from server:', event.data);
+        document.getElementById('messages').textContent += event.data + ' ';
+      });
+
+      // Handle the connection closing
+      socket.addEventListener('close', (event) => {
+        console.log('WebSocket connection closed:', event);
+        document.getElementById('status').textContent = 'Disconnected';
+      });
+
+      // Handle any errors that occur
+      socket.addEventListener('error', (event) => {
+        console.error('WebSocket error:', event);
+        document.getElementById('status').textContent = 'Error';
+      });
+    </script>
+  </body>
+</html>

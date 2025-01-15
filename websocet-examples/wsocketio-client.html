@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socket.IO Example</title>
+    <!-- Include Socket.IO client library -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  </head>
+  <body>
+    <h1>Socket.IO Connection Example</h1>
+    <div>
+      <p>Connection Status: <span id="status">Not Connected</span></p>
+      <p>Received Messages: <span id="messages"></span></p>
+    </div>
+
+    <script>
+      // Replace with your Socket.IO server URL
+      // const socketServerUrl = 'https://your-socket-io-server-url.com';
+      const socketServerUrl = 'ws://localhost:8888';
+
+      // Connect to the Socket.IO server
+      const socket = io(socketServerUrl);
+
+      // Handle connection event
+      socket.on('connect', () => {
+        console.log('Connected to Socket.IO server');
+        document.getElementById('status').textContent = 'Connected';
+
+        // Send a message to the server after connecting
+        socket.emit('message', 'Hello, I am socket.io client');
+      });
+
+      // Handle incoming messages from the server
+      socket.on('message', (data) => {
+        console.log('Message from server:', data);
+        document.getElementById('messages').textContent += data + ' ';
+      });
+
+      // Handle disconnection event
+      socket.on('disconnect', () => {
+        console.log('Disconnected from Socket.IO server');
+        document.getElementById('status').textContent = 'Disconnected';
+      });
+
+      // Handle connection errors
+      socket.on('error', (error) => {
+        console.error('Socket.IO connection error:', error);
+        document.getElementById('status').textContent = 'Connection Error';
+      });
+    </script>
+  </body>
+</html>
