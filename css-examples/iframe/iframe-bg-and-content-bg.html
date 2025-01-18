@@ -1,4 +1,4 @@
-<html style="color-scheme: dark;">
+<html style="color-scheme: light;">
 
 <head>
   <meta name="color-scheme" content="light dark">
@@ -13,9 +13,9 @@
 
 <script>
   const switchTheming = document.querySelector('.switchTheming');
-  console.log(switchTheming);
+  const root = document.documentElement;
+  console.log('root.style.colorScheme',root.style.colorScheme,switchTheming);
   switchTheming.addEventListener('click', () => {
-    const root = document.documentElement;
     if(root.style.colorScheme === 'light') {
       root.style.colorScheme = 'dark';
     } else {

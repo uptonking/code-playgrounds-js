@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iframe Content</title>
+</head>
+
+<body>
+  <h1>Iframe Content</h1>
+  <button onclick="sendMessageToMain()">Send Message to Main window</button>
+
+
+  <script>
+    function sendMessageToMain() {
+      // Send a message to the main window
+      window.parent.postMessage('iframe to main 🌵', '*');
+    }
+
+    // Listen for messages from the parent window
+    window.addEventListener('message', function (event) {
+      // if (event.origin !== "http://example.com") return; // Replace with your domain
+      console.log('on-msg-iframe:', event.data, event);
+
+      // Send a response back to the parent window
+      event.source.postMessage('Hello from Iframe', event.origin);
+    });
+  </script>
+</body>
+
+</html>
