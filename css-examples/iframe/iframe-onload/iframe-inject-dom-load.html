@@ -1,0 +1,57 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.rtl.min.css"
+    integrity="sha512-VNBisELNHh6+nfDjsFXDA6WgXEZm8cfTEcMtfOZdx0XTRoRbr/6Eqb2BjqxF4sNFzdvGIt+WqxKgn0DSfh2kcA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</head>
+
+<body>
+  <h2>🗑️ iframe.DOMContentLoaded 不会触发</h2>
+  <h3>不要采用<code>iframeDoc.body.appendChild(script)</code>方式来注入js，直接用iframe.onload</h3>
+
+  <iframe id="myIframe" name="myIframeName" width="320" height="240" style="border: 1px solid coral"
+  allow="accelerometer; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; clipboard-read; clipboard-write; xr-spatial-tracking;"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts allow-downloads allow-pointer-lock"
+  ></iframe>
+  <!-- src="https://www.openstreetmap.org/export/embed.html?bbox=-0.004017949104309083%2C51.47612752641776%2C0.00030577182769775396%2C51.478569861898606&layer=mapnik" -->
+  <!-- src="https://www.bilibili.com/" -->
+
+
+  <script>
+    const iframe = document.getElementById('myIframe');
+    window['ff'] = iframe
+    // window.frames['myIframeName'] === ff.contentWindow // true
+
+    const iframeWin = iframe.contentWindow  ;
+    const iframeDoc = iframe.contentDocument ;
+    console.log(';; iframeDoc ',iframeWin, iframeDoc);
+
+    // iframe.onload = () => {
+    // }
+
+    const scriptSource = `
+    window.addEventListener('DOMContentLoaded', () => {
+      console.log(';; iframe.window.DOMContentLoaded ');
+    });
+     window.onload = () => {
+        console.log(';; iframe.window.onload ');
+      };
+`;
+    const script = iframeDoc.createElement("script");
+    const source = iframeDoc.createTextNode(scriptSource);
+    script.appendChild(source);
+    iframeDoc.body.appendChild(script);
+
+    // iframe.setAttribute("src", "https://www.bilibili.com/")
+    iframe.setAttribute("src", "https://www.openstreetmap.org/export/embed.html?bbox=-0.004017949104309083%2C51.47612752641776%2C0.00030577182769775396%2C51.478569861898606&layer=mapnik")
+
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
+    integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+
+</html>

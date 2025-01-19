@@ -1,0 +1,73 @@
+<html>
+
+<head>
+  <!-- <link rel="stylesheet" href="my.css" /> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.rtl.min.css"
+    integrity="sha512-VNBisELNHh6+nfDjsFXDA6WgXEZm8cfTEcMtfOZdx0XTRoRbr/6Eqb2BjqxF4sNFzdvGIt+WqxKgn0DSfh2kcA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+  <h2>iframe["srcdoc"].window.onload能稳定触发</h2>
+  <h3>不要采用<code>iframeDoc.body.appendChild(script)</code>方式来注入js，直接用iframe.onload</h3>
+
+  <iframe id="myIframe" name="myIframeName" width="200" height="200" style="border: 1px solid coral" srcdoc="
+          <h1 id='title'>Hello from Iframe</h1>
+          <button type='button' id='fire'>Click Me!</button>
+          "></iframe>
+  <!-- src="https://www.openstreetmap.org/export/embed.html?bbox=-0.004017949104309083%2C51.47612752641776%2C0.00030577182769775396%2C51.478569861898606&layer=mapnik" -->
+  <!-- src="https://www.bilibili.com/" -->
+
+  <script>
+    const iframe = document.getElementById('myIframe');
+    const iframeWin = iframe.contentWindow || iframe;
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+    console.log(';; iframeDoc ', iframeDoc);
+
+    // 🚨 放在script.append前有时也不会执行
+    // iframeWin.addEventListener('DOMContentLoaded', () => {
+    //   console.log(';; iframe.window.DOMContentLoaded ');
+    // });
+
+    const script = iframeDoc.createElement('script');
+    script.append(`
+      window.onload = () => {
+        console.log(';; iframe.window.onload ');
+      };
+
+      window.addEventListener('DOMContentLoaded', () => {
+        console.log(';; iframe.window.DOMContentLoaded ');
+      });
+      `);
+    iframeDoc.body.appendChild(script);
+
+    // 🚨 放在script.append后有时不会执行
+    // iframeWin.addEventListener('DOMContentLoaded', () => {
+    //   console.log(';; iframe.window.DOMContentLoaded ');
+    // });
+
+    // 🚨 以下方式注册的事件在顶层window可以触发，但在iframe内不会触发，iframe
+    // window.addEventListener('DOMContentLoaded', () => {
+    //   console.log(';; iframe.window.DOMContentLoaded ');
+    // });
+
+    // 💡 [Detect DOMContentLoaded in iframe - Stack Overflow](https://stackoverflow.com/questions/16960829)
+    // document.addEventListener('DOMContentLoaded', () => {
+    //   const iframeWindow = frames['myIframeName'];
+    //   console.log(
+    //     ';; top window.DOMContentLoaded ',
+    //     iframeWindow === window,
+    //     iframeWindow,
+    //   );
+    //   iframeWindow.addEventListener('DOMContentLoaded', () => {
+    //     console.log(';; iframe.window.DOMContentLoaded ');
+    //   });
+    // });
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
+    integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+
+</html>

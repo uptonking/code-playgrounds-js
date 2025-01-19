@@ -1,0 +1,171 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.rtl.min.css"
+    integrity="sha512-VNBisELNHh6+nfDjsFXDA6WgXEZm8cfTEcMtfOZdx0XTRoRbr/6Eqb2BjqxF4sNFzdvGIt+WqxKgn0DSfh2kcA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+  <h2>iframe <code>onload</code> needs to be attached before iframe loads its <code>src</code></h2>
+  <iframe id="myIframe" name="myIframeName" width="480" height="240" style="border: 1px solid coral"
+    src="http://localhost:8080/"
+    allow="accelerometer; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; clipboard-read; clipboard-write; xr-spatial-tracking;"
+    sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts allow-downloads allow-pointer-lock"
+
+    ></iframe>
+  <!-- src="https://www.openstreetmap.org/export/embed.html?bbox=-0.004017949104309083%2C51.47612752641776%2C0.00030577182769775396%2C51.478569861898606&layer=mapnik" -->
+  <!-- src="https://www.bilibili.com/" -->
+  <!-- srcdoc="
+          <h1 id='title'>Hello from Iframe</h1>
+          <button type='button' id='fire'>Click Me!</button>
+          " -->
+
+  <script>
+
+    const iframe = document.getElementById('myIframe');
+    window['ff'] = iframe
+
+    iframe.onload = () => {
+      const iframeWin = iframe.contentWindow;
+      const iframeDoc = iframe.contentDocument;
+      window['ffw'] = iframeWin
+
+
+      // 🚨 这里iframe.contentWindow有值，但iframe.contentDocument为null
+      console.log(';; iframe.onload ',
+        iframe.contentWindow === window,
+        iframe.contentWindow.parent === window,
+        iframe.contentWindow,
+        iframe.contentDocument,
+        // 下面访问.document会有跨域问题
+        // iframe.contentWindow.document===iframe.contentDocument,
+      );
+
+
+      function setupHistoryListeners() {
+
+        const origHistoryProto = iframeWin.history.__proto__;
+        const historyList = [];
+        let historyPosition = -1;
+        iframeWin['historyList'] = historyList
+
+        function pushHistory(url, state) {
+          // remove "future" locations
+          historyList.splice(historyPosition + 1);
+          historyList.push({ url, state });
+          historyPosition = historyList.length - 1;
+        }
+
+        // function handleMessage(data, source) {
+        //   if (source) {
+        //     if (data.type === 'urlback') {
+        //       iframeWin.history.back();
+        //     } else if (data.type === 'urlforward') {
+        //       iframeWin.history.forward();
+        //     } else if (data.type === 'refresh') {
+        //       iframeDoc.location.reload();
+        //     }
+        //   }
+        // }
+
+        Object.assign(iframeWin.history, {
+          go(delta) {
+            const newPos = historyPosition + delta;
+            if (newPos >= 0 && newPos <= historyList.length - 1) {
+              historyPosition = newPos;
+              const { url, state } = historyList[historyPosition];
+              const oldURL = iframeDoc.location.href;
+              origHistoryProto.replaceState.call(window.history, state, '', url);
+              const newURL = iframeDoc.location.href;
+              console.log(';; csb-history-go ', delta, oldURL, newURL)
+              // sendUrlChange(newURL);
+              iframeWin.dispatchEvent(new PopStateEvent('popstate', { state }));
+              if (newURL.indexOf('#') !== -1) {
+                // disableNextHashChange = true;
+                iframeWin.dispatchEvent(
+                  new HashChangeEvent('hashchange', { oldURL, newURL })
+                );
+              }
+            }
+          },
+
+          back() {
+            iframeWin.history.go(-1);
+          },
+
+          forward() {
+            iframeWin.history.go(1);
+          },
+
+          pushState(state, title, url) {
+            origHistoryProto.replaceState.call(iframeWin.history, state, title, url);
+            pushHistory(url, state);
+            console.log(';; csb-history-pushState ', url)
+            // sendUrlChange(document.location.href);
+          },
+
+          replaceState(state, title, url) {
+            origHistoryProto.replaceState.call(iframeWin.history, state, title, url);
+            historyList[historyPosition] = { state, url };
+            console.log(';; csb-history-replaceState ', url)
+            // sendUrlChange(document.location.href);
+          },
+        });
+
+        Object.defineProperties(iframeWin.history, {
+          length: {
+            get() {
+              return historyList.length;
+            },
+            configurable: true,
+          },
+
+          state: {
+            get() {
+              return historyList[historyPosition].state;
+            },
+            configurable: true,
+          },
+        });
+
+
+        // setTimeout(() => {
+        //   console.log(';; csb-history-urlchange ', document.location.href)
+        //   sendUrlChange(document.location.href);
+        // });
+
+        // return listen(handleMessage);
+      }
+
+      setupHistoryListeners()
+    };
+
+    // iframe.setAttribute("src", "https://www.openstreetmap.org/export/embed.html?bbox=-0.004017949104309083%2C51.47612752641776%2C0.00030577182769775396%2C51.478569861898606&layer=mapnik")
+    // iframe.setAttribute("src", "https://www.bilibili.com/")
+
+    console.log(
+      ';; top window.DOMContentLoaded ',
+      iframe.contentWindow === window,
+      iframe.contentWindow,
+      iframe.contentDocument
+    );
+
+    // Receive messages from the iframe
+    window.addEventListener('message', (event) => {
+      if (event.origin !== 'http://localhost:8080') { // Replace with your iframe's origin
+        return;
+      }
+      console.log(';; on-msg-main ', event.data, event)
+
+      // document.getElementById('messageFromIframe').textContent = event.data;
+    });
+
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
+    integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+
+</html>
