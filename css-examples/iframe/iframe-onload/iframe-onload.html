@@ -1,56 +1,69 @@
 <html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.rtl.min.css"
+      integrity="sha512-VNBisELNHh6+nfDjsFXDA6WgXEZm8cfTEcMtfOZdx0XTRoRbr/6Eqb2BjqxF4sNFzdvGIt+WqxKgn0DSfh2kcA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
 
-<head>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.rtl.min.css"
-    integrity="sha512-VNBisELNHh6+nfDjsFXDA6WgXEZm8cfTEcMtfOZdx0XTRoRbr/6Eqb2BjqxF4sNFzdvGIt+WqxKgn0DSfh2kcA=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
-
-<body>
-  <h2>iframe <code>onload</code> needs to be attached before iframe loads its <code>src</code></h2>
-  <iframe id="myIframe" name="myIframeName" width="480" height="240" style="border: 1px solid coral"
-  src="https://www.openstreetmap.org/export/embed.html?bbox=-0.004017949104309083%2C51.47612752641776%2C0.00030577182769775396%2C51.478569861898606&layer=mapnik"
-  allow="accelerometer; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; clipboard-read; clipboard-write; xr-spatial-tracking;"
-  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts allow-downloads allow-pointer-lock"
-
-  ></iframe>
-  <!-- src="https://www.bilibili.com/" -->
-  <!-- srcdoc="
+  <body>
+    <h2>
+      iframe <code>onload</code> needs to be attached before iframe loads its
+      <code>src</code>
+    </h2>
+    <iframe
+      id="myIframe"
+      name="myIframeName"
+      width="480"
+      height="240"
+      style="border: 1px solid coral"
+      src="https://www.openstreetmap.org/export/embed.html?bbox=-0.004017949104309083%2C51.47612752641776%2C0.00030577182769775396%2C51.478569861898606&layer=mapnik"
+      allow="accelerometer; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; clipboard-read; clipboard-write; xr-spatial-tracking;"
+      sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts allow-downloads allow-pointer-lock"
+    ></iframe>
+    <!-- src="https://www.bilibili.com/" -->
+    <!-- srcdoc="
           <h1 id='title'>Hello from Iframe</h1>
           <button type='button' id='fire'>Click Me!</button>
           " -->
 
-  <script>
+    <script>
+      const iframe = document.getElementById('myIframe');
+      window['ff'] = iframe;
 
-    const iframe = document.getElementById('myIframe');
-    const iframeWin = iframe.contentWindow || iframe;
-    const iframeDoc = iframe.contentDocument;
+      const iframeWin = iframe.contentWindow || iframe;
+      const iframeDoc = iframe.contentDocument;
 
-    iframe.onload = () => {
-      // 🚨 这里iframe.contentWindow有值，但iframe.contentDocument为null
-      console.log(';; iframe.onload ',
-        iframe.contentWindow === window,
-        iframe.contentWindow.parent === window,
-        iframe.contentWindow,
-        iframe.contentDocument
-        //
+      iframe.onload = () => {
+        // 🚨 这里iframe.contentWindow有值，但iframe.contentDocument为null
+        console.log(
+          ';; iframe.onload ',
+          iframe.contentWindow === window,
+          iframe.contentWindow.parent === window,
+          iframe.contentWindow,
+          iframe.contentDocument,
+          //
+        );
+      };
+      // iframe.setAttribute("src", "https://www.openstreetmap.org/export/embed.html?bbox=-0.004017949104309083%2C51.47612752641776%2C0.00030577182769775396%2C51.478569861898606&layer=mapnik")
+      // iframe.setAttribute("src", "https://www.bilibili.com/")
+
+      console.log(
+        ';; top window.DOMContentLoaded ',
+        iframeWin === window,
+        iframeWin,
+        iframeDoc,
       );
-    };
-    // iframe.setAttribute("src", "https://www.openstreetmap.org/export/embed.html?bbox=-0.004017949104309083%2C51.47612752641776%2C0.00030577182769775396%2C51.478569861898606&layer=mapnik")
-    // iframe.setAttribute("src", "https://www.bilibili.com/")
+    </script>
 
-    console.log(
-      ';; top window.DOMContentLoaded ',
-      iframeWin === window,
-      iframeWin,
-      iframeDoc
-    );
-
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
-    integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-</body>
-
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
+      integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+  </body>
 </html>
