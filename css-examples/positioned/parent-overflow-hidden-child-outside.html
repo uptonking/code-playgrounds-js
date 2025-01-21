@@ -33,16 +33,39 @@
     .main {
       width: 100%;
     }
+
+    .parent {
+      position:relative;
+      overflow:hidden;
+      width: 40rem;
+      height: 10rem;
+      border: 1px solid coral;
+
+    }
+
+    .child {
+      position: absolute;
+      top: -10px;
+      width: 10rem;
+      height: 3rem;
+      border: 1px solid teal;
+    }
+
   </style>
 </head>
 
 <body>
-  <h1>test homepage <h1>
+  <h1>parent is overflow-hidden, absolute child outside it is invisible <h1>
 
-      <h2> more </h2>
+      <h3> <a href="https://stackoverflow.com/questions/43398768/css-how-to-have-position-absolute-child-visible-outside-of-parent-with-overflow" class="question-hyperlink">how to have position absolute child visible outside of parent with overflow: hidden; ? Noway</a> </h3>
 
       <div id="main" class="main">
-        contents
+        <div class="parent">
+          parent
+          <div class="child">
+            child
+          </div>
+        </div>
       </div>
 
       <ul>
