@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React useEffect Auto Focus Example</title>
+    <script
+      src="https://unpkg.com/react@18/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <!-- Load Babel 7 for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useEffect, useRef, useState } = React;
+
+      function AutoFocusInput() {
+        const inputRef = useRef(null);
+        const [fileOrFolderName, setFileOrFolderName] = useState('');
+
+        // useEffect(() => {
+        //   // Focus the input element when the component mounts
+        //   inputRef.current.focus();
+        //   console.log(';; auto focus input');
+        // }, []);
+
+        return (
+          <div>
+            <h1>Auto Focus Input Example</h1>
+            <input
+              // ref={inputRef}
+              ref={(ref) => {
+                inputRef.current = ref;
+                ref?.focus();
+                console.log(';; rename input focus ');
+              }}
+              type='text'
+              placeholder='Type something...'
+              autoFocus={true}
+              value={fileOrFolderName}
+              onClick={(event) => event.stopPropagation()}
+              onInput={(e) => {
+                console.log(';; onInput event ', e.target.value);
+                setFileOrFolderName(e.target.value);
+                // onInputChange(e);
+              }}
+              onKeyDown={(e) => {
+                console.log(';; onKeyDown event ', e.target.value);
+                // onInputKeyDown(e, path);
+              }}
+            />
+          </div>
+        );
+      }
+
+      // ReactDOM.render(<AutoFocusInput />, document.getElementById('root'));
+      const rootElement = document.getElementById('root');
+      const root = ReactDOM.createRoot(rootElement);
+      root.render(<AutoFocusInput />);
+    </script>
+  </body>
+</html>
