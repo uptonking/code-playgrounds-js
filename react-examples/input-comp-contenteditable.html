@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>React useEffect Auto Focus Example</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <!-- Load Babel 7 for JSX transformation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useEffect, useRef, useState } = React;
+
+    /**
+     * ContentEditableInput is a controlled react input component using contenteditable instead of html input.
+     * - 🐛 在conteditable中输入时光标位置不正确
+     */
+    const ContentEditableInput = ({ value, onChange, placeholder, autoFocus }) => {
+      const [innerValue, setInnerValue] = useState(value || '');
+      const contentEditableRef = useRef(null);
+      const selectionRef = useRef(null);
+
+      // Focus the element on mount if `autoFocus` is true
+      useEffect(() => {
+        if (autoFocus && contentEditableRef.current) {
+          contentEditableRef.current.focus();
+        }
+      }, [autoFocus]);
+
+      // Update the inner value when the external value changes
+      useEffect(() => {
+        if (value !== innerValue) {
+          setInnerValue(value || '');
+          if (contentEditableRef.current) {
+            contentEditableRef.current.textContent = value || '';
+          }
+        }
+      }, [value]);
+
+      const handleInput = (event) => {
+        const newValue = event.target.textContent || '';
+        setInnerValue(newValue);
+        if (onChange) {
+          onChange(newValue);
+        }
+
+        // Save the current selection
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
+        const preSelection = range.startOffset;
+        selectionRef.current = preSelection;
+      };
+
+      const handleBlur = () => {
+        if (contentEditableRef.current && !innerValue.trim()) {
+          contentEditableRef.current.textContent = placeholder || '';
+        }
+      };
+
+      const handleFocus = () => {
+        if (contentEditableRef.current && contentEditableRef.current.textContent === placeholder) {
+          contentEditableRef.current.textContent = '';
+        }
+
+        // Restore the selection when focusing
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.setStart(contentEditableRef.current, selectionRef.current || 0);
+        range.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      };
+
+      return (
+        <div
+          ref={contentEditableRef}
+          contentEditable
+          onInput={handleInput}
+          onBlur={handleBlur}
+          onFocus={handleFocus}
+          dangerouslySetInnerHTML={{ __html: innerValue || placeholder }}
+          style={{
+            border: '1px solid #ccc',
+            padding: '8px',
+            borderRadius: '4px',
+            minHeight: '20px',
+            outline: 'none',
+            whiteSpace: 'pre-wrap',
+          }}
+        />
+      );
+    };
+
+    const App = () => {
+      const [inputValue, setInputValue] = useState('');
+
+      const handleChange = (value) => {
+        setInputValue(value);
+      };
+
+      return (
+        <div>
+          <h1>ContentEditable Input</h1>
+          <ContentEditableInput
+            value={inputValue}
+            onChange={handleChange}
+            placeholder="Type something..."
+            autoFocus
+          />
+          <p>Current Value: {inputValue}</p>
+        </div>
+      );
+    };
+
+    const rootElement = document.getElementById('root');
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(<App />);
+  </script>
+</body>
+
+</html>
