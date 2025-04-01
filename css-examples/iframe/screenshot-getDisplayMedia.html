@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Screen Capture Example</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+        background-color: #f0f0f0;
+      }
+      h1 {
+        color: #333;
+        border-bottom: 2px solid #ccc;
+        padding-bottom: 10px;
+      }
+      .content {
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.2s;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      #screenshotsContainer img {
+        max-width: 90%; /* Limit screenshot size */
+        height: auto;
+        display: block; /* Ensure it takes its own line */
+        margin-top: 15px;
+        border: 1px solid #ccc;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      #status {
+        margin-top: 15px;
+        font-style: italic;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Screen Capture with getDisplayMedia</h1>
+    <h3>❌ 似乎不work</h3>
+
+    <div class="content">
+      <h2>Example Content Area</h2>
+      <p>This is some example text content on the page. We also have a list:</p>
+      <ul>
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3 with <strong>bold text</strong></li>
+      </ul>
+      <p>Click the button below to capture the screen/window/tab you select.</p>
+    </div>
+
+    <button id="screenshotBtn">📷 Take Screenshot</button>
+    <div id="status"></div>
+
+    <div id="screenshotsContainer">
+      <h2>Screenshots:</h2>
+      <!-- Screenshots will be appended here -->
+    </div>
+
+    <script>
+      const screenshotBtn = document.getElementById('screenshotBtn');
+      const screenshotsContainer = document.getElementById(
+        'screenshotsContainer',
+      );
+      const statusDiv = document.getElementById('status');
+
+      screenshotBtn.addEventListener('click', async () => {
+        statusDiv.textContent = 'Requesting screen capture permission...';
+        let stream = null; // Define stream outside try block for finally
+        let video = null; // Define video outside try block for cleanup
+
+        try {
+          // 1. Request Screen Share using getDisplayMedia
+          stream = await navigator.mediaDevices.getDisplayMedia({
+            video: { cursor: 'always' }, // capture cursor
+            audio: false, // we don't need audio
+          });
+
+          statusDiv.textContent = 'Screen capture started. Capturing frame...';
+
+          // 2. Get the Video Track
+          const track = stream.getVideoTracks()[0];
+
+          // 3. Create a temporary video element to play the stream
+          video = document.createElement('video');
+          video.style.display = 'none'; // Keep it hidden
+          document.body.appendChild(video); // Needs to be in DOM for some browsers? Better safe.
+
+          // Set stream as source and play
+          video.srcObject = stream;
+          await video.play(); // Start playing the video stream
+
+          // 4. Wait for the video metadata to load to get dimensions
+          //    We need this to set the canvas size correctly.
+          await new Promise((resolve) => {
+            video.onloadedmetadata = resolve;
+          });
+
+          // 5. Create a canvas to draw the current video frame
+          const canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const context = canvas.getContext('2d');
+
+          // Draw the current frame from the video onto the canvas
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+          // 6. Convert canvas content to a Data URL (PNG image)
+          const dataUrl = canvas.toDataURL('image/png');
+
+          // 7. Create an image element and append it
+          const img = document.createElement('img');
+          img.src = dataUrl;
+          img.alt = `Screenshot taken at ${new Date().toLocaleTimeString()}`;
+          screenshotsContainer.appendChild(img);
+
+          statusDiv.textContent = 'Screenshot captured and added below.';
+
+          // 8. Clean up: Stop the track and stream
+          track.stop();
+          stream.getTracks().forEach((track) => track.stop()); // Ensure all tracks are stopped
+        } catch (err) {
+          console.error('Error capturing screen:', err);
+          if (err.name === 'NotAllowedError') {
+            statusDiv.textContent = 'Error: Screen capture permission denied.';
+          } else {
+            statusDiv.textContent = `Error: Could not capture screen (${err.message})`;
+          }
+        } finally {
+          // More cleanup: Ensure video element is removed if created
+          if (video && video.parentNode) {
+            video.parentNode.removeChild(video);
+          }
+          // Ensure stream is stopped even if errors happened after it started
+          if (stream) {
+            stream.getTracks().forEach((track) => track.stop());
+          }
+        }
+      });
+
+      // Check for browser support
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+        screenshotBtn.disabled = true;
+        statusDiv.textContent =
+          'Error: getDisplayMedia API is not supported by your browser.';
+        alert(
+          'Your browser does not support the getDisplayMedia API required for screen capture.',
+        );
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Screen Capture Example</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .content {
+        margin: 20px 0;
+        padding: 15px;
+        border: 1px solid #ccc;
+      }
+      button {
+        padding: 10px 15px;
+        background: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      .screenshot {
+        margin-top: 20px;
+        border: 2px solid #666;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Screen Capture Demo</h1>
+    <h3>✅ 能work，但截图体验不好</h3>
+
+    <div class="content">
+      <p>This is some example content:</p>
+      <ul>
+        <li>List item 1</li>
+        <li>List item 2</li>
+        <li>List item 3</li>
+      </ul>
+      <p>Here's a sample form element:</p>
+      <input type="text" placeholder="Enter some text" />
+    </div>
+
+    <button onclick="captureScreen()">Capture Screen</button>
+    <div id="screenshots"></div>
+
+    <script>
+      async function captureScreen() {
+        try {
+          // Get screen capture stream
+          const stream = await navigator.mediaDevices.getDisplayMedia({
+            video: { mediaSource: 'screen' },
+          });
+
+          // Create video element to process the stream
+          const video = document.createElement('video');
+          video.srcObject = stream;
+          video.onloadedmetadata = async () => {
+            await video.play();
+
+            // Create canvas to capture frame
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+
+            // Wait briefly to ensure video is rendered
+            setTimeout(() => {
+              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+              // Convert to image
+              const img = document.createElement('img');
+              img.src = canvas.toDataURL();
+              img.className = 'screenshot';
+
+              // Add to page
+              const screenshotDiv = document.getElementById('screenshots');
+              screenshotDiv.appendChild(document.createElement('hr'));
+              screenshotDiv.appendChild(img);
+
+              // Stop the stream
+              stream.getTracks().forEach((track) => track.stop());
+            }, 100);
+          };
+        } catch (err) {
+          console.error('Error capturing screen:', err);
+          alert('Screen capture failed: ' + err.message);
+        }
+      }
+    </script>
+  </body>
+</html>

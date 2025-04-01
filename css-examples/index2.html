@@ -37,7 +37,7 @@
 </head>
 
 <body>
-  <h1>test homepage <h1>
+  <h1>test homepage2 <h1>
 
       <h2> more </h2>
 
@@ -45,10 +45,47 @@
         contents
       </div>
 
-
+      <ul>
+        <!-- <li>
+    <a href='http://test.localyaoo.com' target='_blank'>
+      test.localyaoo.com
+    </a>
+    <ul>
+      <li>
+        /home/yaoo/Documents/repo/testserver80
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href='http://css.pgd.localyaoo.com' target='_blank'>
+      css.pgd.localyaoo.com (broken on NTFS partition)
+    </a>
+    <ul>
+      <li>
+        /media/yaoo/win10/active/osharing/repos4datalking/prospect-garden-design/packages/css/docs
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href='http://rme.localyaoo.com' target='_blank'>
+      rme.localyaoo.com
+    </a>
+    <ul>
+      <li>
+        /home/yaoo/Documents/repo/officeditor/all-md/rich-markdown-editor/storybook-static
+      </li>
+    </ul>
+  </li> -->
+      </ul>
       <script>
         // document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
         //   ':35729/livereload.js?snipver=1"></' + 'script>');
+
+        console.log(' 🌹 inside iframe ')
+        setTimeout(()=>{
+          console.log(' 🌹 inside iframe 2s later')
+          throw new Error(' 🐛 inside iframe error')
+        },2000)
       </script>
 </body>
 

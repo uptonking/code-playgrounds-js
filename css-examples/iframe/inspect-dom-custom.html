@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Inspect Element Example</title>
+    <style>
+      /* CSS for highlighting */
+      .inspect-highlight {
+        border: 2px solid #007bff !important; /* Adjust color and thickness */
+        box-shadow: 0 0 5px #007bff; /* Optional: subtle glow */
+      }
+    </style>
+  </head>
+  <body>
+    <button id="inspectButton">Inspect</button>
+
+    <div id="webpage1">
+      <h1>Webpage 1 Content</h1>
+      <p>This is some sample text.</p>
+      <a href="#">A link</a>
+      <div>
+        <p>Nested content</p>
+      </div>
+
+      <iframe
+        id="dao-browserIframe"
+        class="d42-iframe-container"
+        src="https://example.com/"
+        style="pointer-events: auto"
+      >
+      </iframe>
+      <h2>heading2 Content here</h2>
+    </div>
+
+    <div id="inspectionDetails" style="display: none">
+      <h2>Element Details</h2>
+      <pre id="elementInfo"></pre>
+    </div>
+
+    <script>
+      let inspecting = false;
+      let highlightedElement = null; // Keep track of the currently highlighted element
+
+      const inspectButton = document.getElementById('inspectButton');
+      const webpage1 = document.getElementById('webpage1');
+      const inspectionDetails = document.getElementById('inspectionDetails');
+      const elementInfo = document.getElementById('elementInfo');
+
+      inspectButton.addEventListener('click', () => {
+        inspecting = !inspecting; // Toggle inspection mode
+        inspectButton.textContent = inspecting ? 'Stop Inspecting' : 'Inspect'; // Update button text
+
+        if (inspecting) {
+          startInspecting();
+        } else {
+          stopInspecting();
+        }
+      });
+
+      function startInspecting() {
+        webpage1.addEventListener('mousemove', handleMousemove);
+        webpage1.addEventListener('click', handleMouseclick);
+        document.addEventListener('keydown', handleKeydown); // Listen for Escape key
+      }
+
+      function stopInspecting() {
+        webpage1.removeEventListener('mousemove', handleMousemove);
+        webpage1.removeEventListener('click', handleMouseclick);
+        document.removeEventListener('keydown', handleKeydown);
+
+        // Remove highlighting from any previously highlighted element
+        if (highlightedElement) {
+          highlightedElement.classList.remove('inspect-highlight');
+          highlightedElement = null;
+        }
+        inspectionDetails.style.display = 'none';
+      }
+
+      function handleMousemove(event) {
+        if (!inspecting) return;
+
+        const target = event.target;
+
+        // Avoid highlighting the same element repeatedly
+        if (highlightedElement === target) return;
+
+        // Remove highlighting from the previously highlighted element
+        if (highlightedElement) {
+          highlightedElement.classList.remove('inspect-highlight');
+        }
+
+        highlightedElement = target;
+        highlightedElement.classList.add('inspect-highlight');
+      }
+
+      function handleMouseclick(event) {
+        if (!inspecting) return;
+
+        event.preventDefault(); // Prevent default click behavior (e.g., following links)
+
+        const target = event.target;
+        displayElementDetails(target);
+      }
+
+      function handleKeydown(event) {
+        if (event.key === 'Escape') {
+          inspectButton.click(); // Simulate a click on the Inspect button to stop inspecting
+        }
+      }
+
+      function displayElementDetails(element) {
+        // You can display any element properties you want here.
+        // For example: tag name, class names, attributes, etc.
+        const details = {
+          tagName: element.tagName,
+          id: element.id,
+          className: element.className,
+          attributes: Array.from(element.attributes).map((attr) => ({
+            name: attr.name,
+            value: attr.value,
+          })),
+        };
+
+        elementInfo.textContent = JSON.stringify(details, null, 2); // Format the JSON for readability
+        inspectionDetails.style.display = 'block'; // Show the details panel
+      }
+    </script>
+  </body>
+</html>

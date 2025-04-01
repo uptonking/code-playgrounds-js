@@ -1,0 +1,68 @@
+<html>
+
+<head>
+  <style>
+    body,
+    html {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ✅ 同域名时可截图 -->
+  <!-- <iframe id='egIframe' src="http://localhost:52331/css-examples/index2.html"></iframe> -->
+  <iframe id='egIframe' src="http://localhost:8080/index2.html"></iframe>
+  <!-- 🧐 跨域截图是空白 -->
+  <!-- <iframe id='egIframe' src="https://example.com/"></iframe> -->
+  <!-- ✅ srcdoc可截图 -->
+  <!-- <iframe id='egIframe' srcdoc="<!doctype html><p>Hello World!</p>""></iframe> -->
+  <!-- 🧐 跨域截图是空白 -->
+  <!-- <iframe id='egIframe' src=" https://example.com/" style="width:500px; height:200px;"></iframe> -->
+  <div>
+    <input id="egBtn" type="button" value="shot"></input>
+  </div>
+  <!-- <script type="module" src="../../vendors/scripts/html2canvas-1.4.1.esm.js"></script> -->
+  <script src="../../vendors/scripts/jquery-3.7.1.slim.js"></script>
+  <script type="module">
+    import html2canvas from '../../vendors/scripts/html2canvas-1.4.1.esm.js';
+    console.log(';; html2canvas ', html2canvas)
+    window.fff = document.querySelector("#egIframe")
+
+    setTimeout(() => {
+      html2canvas(document.querySelector("#egIframe").contentWindow.document.body, { useCORS: true, scrollY: document.body.scrollTop }).then(canvas => {
+        // 🧐👀 不能只选择iframe，要选择iframe中的元素
+        // html2canvas(document.querySelector("#egIframe")).then(canvas => {
+        // html2canvas(document.querySelector("#egBtn")).then(canvas => {
+        document.body.appendChild(canvas)
+      });
+    }, 1500)
+
+    // $(function () {
+    //   $('[type="button"]', 'body').on('click', function () {
+    //     html2canvas($('#egIframe').get(0), {
+    //       backgroundColor: null,
+    //       scale: 1,
+    //       scrollX: 0,
+    //       scrollY: 0,
+    //       x: 0,
+    //       y: 0,
+    //       allowTaint: true,
+    //       logging: true,
+    //       profile: true,
+    //       useCORS: true
+    //     }).then(function (canvas) {
+    //       document.body.appendChild(canvas);
+    //       /*$('<img />', {
+    //         src: canvas.toDataURL("image/png")
+    //       }).one('load', function(){
+    //         document.body.appendChild(this)
+    //         //$(this).appendTo($('body'))
+    //       })*/
+    //     });
+    //   })
+    // })
+  </script>
+</body>
+
+</html>

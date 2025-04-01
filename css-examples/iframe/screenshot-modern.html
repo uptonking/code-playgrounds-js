@@ -45,11 +45,28 @@
         contents
       </div>
 
+      <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.js"></script>
+      <script src="https://unpkg.com/modern-screenshot@4.6.0/dist/index.js"></script>
+      <script>
+        // modernScreenshot.domToPng(document.querySelector('body')).then(dataUrl => {
+        //   const link = document.createElement('a')
+        //   link.download = 'screenshot.png'
+        //   link.href = dataUrl
+        //   link.click()
+        // })
 
+        setTimeout(() => {
+          // modernScreenshot.domToCanvas(document.body,).then(canvas => {
+            html2canvas(document.body,).then(canvas => {
+            document.body.appendChild(canvas)
+          });
+        }, 1500)
+      </script>
       <script>
         // document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
         //   ':35729/livereload.js?snipver=1"></' + 'script>');
       </script>
+
 </body>
 
 </html>
